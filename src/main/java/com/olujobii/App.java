@@ -1,13 +1,18 @@
 package com.olujobii;
 
-/**
- * Hello world!
- *
- */
-public class App 
+
+import com.olujobii.presentation.InventoryManagementSystem;
+import com.olujobii.repository.impl.InventoryRepositoryImpl;
+
+import java.util.HashMap;
+
+public class App
 {
     public static void main( String[] args )
     {
-        System.out.println( "Hello World!" );
+        InventoryRepositoryImpl inventoryRepository = new InventoryRepositoryImpl(new HashMap<>());
+
+        InventoryManagementSystem inventoryManagementSystem = new InventoryManagementSystem();
+        inventoryManagementSystem.startApplication();
     }
 }
