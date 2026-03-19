@@ -4,6 +4,7 @@ import com.olujobii.model.Product;
 import com.olujobii.repository.InventoryRepository;
 import com.olujobii.service.ProductService;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -17,11 +18,6 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public void addProduct(Product product) {
         inventoryRepository.add(product);
-    }
-
-    @Override
-    public void updateQuantity(Product product) {
-
     }
 
     @Override
@@ -64,5 +60,18 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Product updateProductQuantity(Product product, int quantity){
         return new Product(product.id(), product.name(), product.price(), quantity,product.category());
+    }
+
+    @Override
+    public List<Product> searchProductName(String productName){
+        Map<String, Product> products = inventoryRepository.getProducts();
+        List<Product> productList = new ArrayList<>();
+
+        for(Product product : products.values()){
+            if(product.name().equalsIgnoreCase(productName))
+                productList.add(product);
+        }
+
+        return productList;
     }
 }

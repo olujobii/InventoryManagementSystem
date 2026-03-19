@@ -8,8 +8,6 @@ public interface ProductService {
 
     void addProduct(Product product);
 
-    void updateQuantity(Product product);
-
     boolean searchByName(Product product);
 
     List<Product> listByCategory(String category);
@@ -25,4 +23,6 @@ public interface ProductService {
     Product getProduct(String id);
 
     Product updateProductQuantity(Product product, int quantity);
+
+    List<Product> searchProductName(String productName);
 }
