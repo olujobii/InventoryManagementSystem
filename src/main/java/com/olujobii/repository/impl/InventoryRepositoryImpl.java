@@ -18,8 +18,8 @@ public class InventoryRepositoryImpl implements InventoryRepository {
     }
 
     @Override
-    public void update(Product product) {
-
+    public Product remove(String productId) {
+        return products.remove(productId);
     }
 
     @Override
