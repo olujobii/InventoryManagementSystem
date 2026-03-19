@@ -14,7 +14,7 @@ public interface ProductService {
 
     List<Product> sortByPrice();
 
-    void removeProduct(Product product);
+    Product removeProduct(String productId);
 
     double totalInventoryValue();
 
