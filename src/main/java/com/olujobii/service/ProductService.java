@@ -19,4 +19,10 @@ public interface ProductService {
     void removeProduct(Product product);
 
     double totalInventoryValue();
+
+    boolean isKeyAvailable(String userInputId);
+
+    Product getProduct(String id);
+
+    Product updateProductQuantity(Product product, int quantity);
 }
