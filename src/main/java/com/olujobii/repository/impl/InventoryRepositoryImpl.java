@@ -6,15 +6,15 @@ import com.olujobii.repository.InventoryRepository;
 import java.util.Map;
 
 public class InventoryRepositoryImpl implements InventoryRepository {
-    private final Map<String, Product> productsMap;
+    private final Map<String, Product> products;
 
-    public InventoryRepositoryImpl(Map<String, Product> productsMap){
-        this.productsMap = productsMap;
+    public InventoryRepositoryImpl(Map<String, Product> products){
+        this.products = products;
     }
 
     @Override
     public void add(Product product) {
-
+        products.put(product.id(),product);
     }
 
     @Override
@@ -25,5 +25,15 @@ public class InventoryRepositoryImpl implements InventoryRepository {
     @Override
     public boolean searchByName(Product product) {
         return false;
+    }
+
+    @Override
+    public Map<String,Product> getProducts(){
+        return products;
+    }
+
+    @Override
+    public Product getProductFromInventory(String id){
+        return products.get(id);
     }
 }
