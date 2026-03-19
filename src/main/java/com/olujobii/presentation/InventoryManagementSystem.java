@@ -5,6 +5,7 @@ import com.olujobii.model.Product;
 import com.olujobii.service.ProductService;
 import com.olujobii.util.InputValidatorUtil;
 
+import java.util.List;
 import java.util.Scanner;
 
 public class InventoryManagementSystem {
@@ -35,7 +36,7 @@ public class InventoryManagementSystem {
                     updateProductQuantity();
                     break;
                 case "3":
-                    System.out.println("Product search complete");
+                    searchForProductByName();
                     break;
                 case "4":
                     System.out.println("Product category listed");
@@ -223,6 +224,7 @@ public class InventoryManagementSystem {
                 continue;
             }
 
+            //Will work on this, no need for this if I still plan to get that product later on. Just check if the returned value is null and show error message
             if(!productService.isKeyAvailable(productId)){
                 System.out.println("This product does not seem to exist in our system, kindly reconfirm the product ID");
                 continue;
@@ -260,6 +262,32 @@ public class InventoryManagementSystem {
         productService.addProduct(updatedProduct);
         System.out.println("Product updated successfully.");
         System.out.println(updatedProduct);
+    }
+
+    private void searchForProductByName(){
+        String productName = "";
+        boolean isValid = false;
+        do {
+            System.out.print("Enter product name: ");
+            productName = scanner.nextLine().trim();
+
+            if (productName.isBlank()) {
+                System.out.println("Not a valid product name");
+                continue;
+            }
+
+            isValid = true;
+        }while(!isValid);
+
+        List<Product> products = productService.searchProductName(productName);
+        if(products.isEmpty()){
+            System.out.println("Product does not exist in our system");
+            return;
+        }
+
+        System.out.println("Product found, loading product details...");
+        for(Product product : products)
+            System.out.println(product);
     }
 
     private void exitApplication(){
