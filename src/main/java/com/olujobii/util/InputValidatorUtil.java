@@ -1,0 +1,18 @@
+package com.olujobii.util;
+
+public class InputValidatorUtil {
+
+    public static boolean isAValidInteger(String input){
+        try{
+           Integer.parseInt(input);
+           return true;
+        }catch(NumberFormatException ex){
+            return false;
+        }
+    }
+
+    public static boolean isUserOptionValid(int userOption, int listSize){
+        return userOption < 1 || userOption > listSize;
+    }
+
+}
