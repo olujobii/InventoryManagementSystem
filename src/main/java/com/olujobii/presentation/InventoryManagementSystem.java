@@ -26,8 +26,12 @@ public class InventoryManagementSystem {
             printMenu();
 
             System.out.print("Choose an option: ");
-            String userOption = scanner.nextLine();
+            String userOption = scanner.nextLine().trim();
 
+            if(userOption.isBlank()){
+                System.out.println("You did not select any option, try again");
+                continue;
+            }
             switch(userOption){
                 case "1":
                     addProduct();
@@ -45,7 +49,7 @@ public class InventoryManagementSystem {
                     System.out.println("Product sort complete");
                     break;
                 case "6":
-                    System.out.println("Product removed successfully");
+                    removeProduct();
                     break;
                 case "7":
                     System.out.println("Total Inventory calculated");
@@ -224,16 +228,17 @@ public class InventoryManagementSystem {
                 continue;
             }
 
-            //Will work on this, no need for this if I still plan to get that product later on. Just check if the returned value is null and show error message
-            if(!productService.isKeyAvailable(productId)){
-                System.out.println("This product does not seem to exist in our system, kindly reconfirm the product ID");
-                continue;
-            }
             isValid = true;
         }while(!isValid);
 
-        System.out.println("Fetching Product for you.....");
         Product product = productService.getProduct(productId);
+
+        if(product == null){
+            System.out.println("Product does not exist in our system");
+            return;
+        }
+
+        System.out.println("Fetching Product for you.....");
         System.out.println(product);
 
         //VALIDATING NEW QUANTITY
@@ -288,6 +293,32 @@ public class InventoryManagementSystem {
         System.out.println("Product found, loading product details...");
         for(Product product : products)
             System.out.println(product);
+    }
+
+    public void removeProduct(){
+        String productId = "";
+        boolean isValid = false;
+        do {
+            System.out.print("Enter product ID: ");
+            productId = scanner.nextLine();
+
+            if(productId.isBlank()){
+                System.out.println("You did not input any ID, please input an ID to confirm if the product exists");
+                continue;
+            }
+
+            isValid = true;
+        }while(!isValid);
+
+        Product product = productService.removeProduct(productId);
+
+        if(product == null){
+            System.out.println("Product does not exist in our system.");
+            return;
+        }
+
+        System.out.println("Product removed successfully: ");
+        System.out.println(product);
     }
 
     private void exitApplication(){
