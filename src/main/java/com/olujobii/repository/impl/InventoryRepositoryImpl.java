@@ -1,5 +1,6 @@
 package com.olujobii.repository.impl;
 
+import com.olujobii.enums.ProductCategory;
 import com.olujobii.model.Product;
 import com.olujobii.repository.InventoryRepository;
 
@@ -32,5 +33,28 @@ public class InventoryRepositoryImpl implements InventoryRepository {
     @Override
     public Product findProductById(String id){
         return products.get(id);
+    }
+
+    @Override
+    public List<Product> findProductByName(String productName){
+        List<Product> searchedProducts = new ArrayList<>();
+
+        for(Product product : getProducts()){
+            if(product.name().toLowerCase().contains(productName.toLowerCase()))
+                searchedProducts.add(product);
+        }
+
+        return searchedProducts;
+    }
+
+    @Override
+    public List<Product> findProductByCategory(ProductCategory productCategory){
+        List<Product> searchedProduct = new ArrayList<>();
+
+        for(Product product : getProducts()){
+            if(product.category() == productCategory)
+                searchedProduct.add(product);
+        }
+        return searchedProduct;
     }
 }

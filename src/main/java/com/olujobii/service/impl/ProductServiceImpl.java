@@ -5,10 +5,8 @@ import com.olujobii.model.Product;
 import com.olujobii.repository.InventoryRepository;
 import com.olujobii.service.ProductService;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 public class ProductServiceImpl implements ProductService {
     private final InventoryRepository inventoryRepository;
@@ -29,15 +27,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public List<Product> listByCategory(ProductCategory category) {
-        List<Product> products = inventoryRepository.getProducts();
-        List<Product> searchedProducts = new ArrayList<>();
-
-        for(Product product : products){
-            if(product.category() == category)
-                searchedProducts.add(product);
-        }
-
-        return searchedProducts;
+        return inventoryRepository.findProductByCategory(category);
     }
 
     @Override
@@ -72,15 +62,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public List<Product> searchProductName(String productName){
-        List<Product> products = inventoryRepository.getProducts();
-        List<Product> searchedProducts = new ArrayList<>();
-
-        for(Product product : products){
-            if(product.name().equalsIgnoreCase(productName))
-                searchedProducts.add(product);
-        }
-
-        return searchedProducts;
+        return inventoryRepository.findProductByName(productName);
     }
 
     @Override
