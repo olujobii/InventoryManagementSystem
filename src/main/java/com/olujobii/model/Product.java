@@ -10,6 +10,6 @@ public record Product(String id, String name, double price, int quantity, Produc
 
     @Override
     public int compareTo(Product other){
-        return Double.compare(other.price, this.price);
+        return Double.compare(this.price, other.price);
     }
 }
