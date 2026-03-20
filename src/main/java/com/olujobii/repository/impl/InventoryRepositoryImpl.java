@@ -3,6 +3,7 @@ package com.olujobii.repository.impl;
 import com.olujobii.model.Product;
 import com.olujobii.repository.InventoryRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -24,12 +25,12 @@ public class InventoryRepositoryImpl implements InventoryRepository {
     }
 
     @Override
-    public Map<String,Product> getProducts(){
-        return products;
+    public List<Product> getProducts(){
+        return new ArrayList<>(products.values());
     }
 
     @Override
-    public Product getProductFromInventory(String id){
+    public Product findProductById(String id){
         return products.get(id);
     }
 }

@@ -3,7 +3,6 @@ package com.olujobii.repository;
 import com.olujobii.model.Product;
 
 import java.util.List;
-import java.util.Map;
 
 public interface InventoryRepository {
 
@@ -11,7 +10,7 @@ public interface InventoryRepository {
 
     Product remove(String productId);
 
-    Map<String, Product> getProducts();
+    List<Product> getProducts();
 
-    Product getProductFromInventory(String id);
+    Product findProductById(String id);
 }
