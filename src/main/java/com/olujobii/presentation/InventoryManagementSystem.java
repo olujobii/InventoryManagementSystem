@@ -54,6 +54,9 @@ public class InventoryManagementSystem {
                     calculateTotalInventoryValue();
                     break;
                 case "8":
+                    listAllProducts();
+                    break;
+                case "9":
                     exitApplication();
                     isProgramRunning = false;
                     break;
@@ -74,7 +77,8 @@ public class InventoryManagementSystem {
         System.out.println("5. Sort by Product Price");
         System.out.println("6. Remove a Product");
         System.out.println("7. Calculate Total Inventory Value");
-        System.out.println("8. Exit");
+        System.out.println("8. List All Products");
+        System.out.println("9. Exit");
     }
 
     private void addProduct(){
@@ -86,7 +90,7 @@ public class InventoryManagementSystem {
         ProductCategory productCategory = validateProductCategory();
 
         //CREATE PRODUCT
-        Product product = productService.createNewProduct(id,productName,price,quantity,productCategory);
+        Product product = new Product(id,productName,price,quantity,productCategory);
         System.out.println("Product created: "+product);
 
         //ADD TO MAP
@@ -97,7 +101,7 @@ public class InventoryManagementSystem {
     private void updateProductQuantity(){
         String productId = validateProductId();
 
-        Product product = productService.getProduct(productId);
+        Product product = productService.getProductById(productId);
 
         if(product == null){
             System.out.println("No record of product in inventory");
@@ -111,7 +115,8 @@ public class InventoryManagementSystem {
         int quantity = validateProductQuantity();
 
         //Updating product
-        Product updatedProduct = productService.updateProductQuantity(product,quantity);
+        Product updatedProduct =  new Product(product.id(),product.name(),
+                product.price(),quantity,product.category());
 
         //Adding product to Map
         productService.addProduct(updatedProduct);
@@ -136,16 +141,12 @@ public class InventoryManagementSystem {
     }
 
     private void sortProductByPrice(){
-        Map<String, Product> maps = productService.getAllProducts();
-
-        if(maps.isEmpty()){
+        if(productService.isProductAvailable()){
             System.out.println("There is no product recorded in the inventory");
             return;
         }
 
-        List<Product> products = new ArrayList<>(maps.values());
-
-        Collections.sort(products);
+        List<Product> products = productService.sortByPrice();
         System.out.println(products);
     }
 
@@ -164,9 +165,7 @@ public class InventoryManagementSystem {
     }
 
     private void calculateTotalInventoryValue(){
-        Map<String, Product> maps = productService.getAllProducts();
-
-        if(maps.isEmpty()){
+        if(productService.isProductAvailable()){
             System.out.println("No record of product in the inventory");
             return;
         }
@@ -174,6 +173,12 @@ public class InventoryManagementSystem {
         double totalInventoryValue = productService.totalInventoryValue();
 
         System.out.println("TOTAL INVENTORY VALUE: "+totalInventoryValue+" NAIRA");
+    }
+
+    private void listAllProducts(){
+        List<Product> products = productService.listAll();
+
+        listProductByCriteria(products);
     }
 
     private void exitApplication(){
@@ -225,9 +230,9 @@ public class InventoryManagementSystem {
             id = "PR-" + userInput; //id variable
 
             //Checking if ID exists in Map
-            boolean isIdAvailable = productService.isKeyAvailable(id);
+            Product product = productService.getProductById(id);
 
-            if (isIdAvailable) {
+            if (product != null) {
                 System.out.println("ID exists. You have to use a unique ID");
                 continue;
             }
@@ -264,12 +269,12 @@ public class InventoryManagementSystem {
             System.out.print("Enter a price (not less than 500): ");
             userInput = scanner.nextLine().trim();
 
-            if (!InputValidatorUtil.isAValidInteger(userInput)) {
+            if (!InputValidatorUtil.isAValidPrice(userInput)) {
                 System.out.println("Not a valid number");
                 continue;
             }
 
-            price = Integer.parseInt(userInput);//price variable
+            price = Double.parseDouble(userInput);//price variable
             if (price < 500) {
                 System.out.println("The price is less than 500 Naira. This item is not worth selling");
                 continue;
