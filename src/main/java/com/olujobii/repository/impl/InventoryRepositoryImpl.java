@@ -3,6 +3,7 @@ package com.olujobii.repository.impl;
 import com.olujobii.model.Product;
 import com.olujobii.repository.InventoryRepository;
 
+import java.util.List;
 import java.util.Map;
 
 public class InventoryRepositoryImpl implements InventoryRepository {
@@ -20,11 +21,6 @@ public class InventoryRepositoryImpl implements InventoryRepository {
     @Override
     public Product remove(String productId) {
         return products.remove(productId);
-    }
-
-    @Override
-    public boolean searchByName(Product product) {
-        return false;
     }
 
     @Override

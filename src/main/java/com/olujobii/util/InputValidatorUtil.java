@@ -11,7 +11,7 @@ public class InputValidatorUtil {
         }
     }
 
-    public static boolean isUserOptionValid(int userOption, int listSize){
+    public static boolean isUserOptionNotValid(int userOption, int listSize){
         return userOption < 1 || userOption > listSize;
     }
 

@@ -5,8 +5,7 @@ import com.olujobii.model.Product;
 import com.olujobii.service.ProductService;
 import com.olujobii.util.InputValidatorUtil;
 
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class InventoryManagementSystem {
     private final Scanner scanner;
@@ -43,16 +42,16 @@ public class InventoryManagementSystem {
                     searchForProductByName();
                     break;
                 case "4":
-                    System.out.println("Product category listed");
+                    listByProductCategory();
                     break;
                 case "5":
-                    System.out.println("Product sort complete");
+                    sortProductByPrice();
                     break;
                 case "6":
                     removeProduct();
                     break;
                 case "7":
-                    System.out.println("Total Inventory calculated");
+                    calculateTotalInventoryValue();
                     break;
                 case "8":
                     exitApplication();
@@ -82,7 +81,7 @@ public class InventoryManagementSystem {
         String userInput;
         String id = "";
         String productName = "";
-        int price = 0;
+        double price = 0;
         int quantity = 0;
         ProductCategory productCategory = null;
         boolean isValidationValid = false;
@@ -195,7 +194,7 @@ public class InventoryManagementSystem {
             int userProductValue = Integer.parseInt(userInput); // Product category value;
 
             //Check if user choice is not less than 0 or not more than length of array
-            if (InputValidatorUtil.isUserOptionValid(userProductValue, productCategories.length)) {
+            if (InputValidatorUtil.isUserOptionNotValid(userProductValue, productCategories.length)) {
                 System.out.println("Not a valid option, try again");
                 continue;
             }
@@ -206,7 +205,7 @@ public class InventoryManagementSystem {
         }while(!isValidationValid);
 
 
-        Product product = new Product(id,productName,price,quantity,productCategory);
+        Product product = productService.createNewProduct(id,productName,price,quantity,productCategory);
         System.out.println("Product created: "+product);
 
         productService.addProduct(product);
@@ -295,7 +294,72 @@ public class InventoryManagementSystem {
             System.out.println(product);
     }
 
-    public void removeProduct(){
+    private void listByProductCategory(){
+        String userInput = "";
+        int productCategoryChoice = 0;
+        boolean isValid = false;
+        ProductCategory[] productCategories = ProductCategory.values();
+
+        do {
+            for (int i = 0; i < productCategories.length; i++) {
+                int order = i + 1;
+                System.out.println(order + ". " + productCategories[i]);
+            }
+
+            System.out.print("Choose an option: ");
+            userInput = scanner.nextLine().trim();
+
+            if(userInput.isBlank()){
+                System.out.println("You did not choose any option, try again");
+                continue;
+            }
+
+            if(!InputValidatorUtil.isAValidInteger(userInput)){
+                System.out.println("Not a valis option");
+                continue;
+            }
+
+            productCategoryChoice = Integer.parseInt(userInput);
+
+            if(InputValidatorUtil.isUserOptionNotValid(productCategoryChoice,productCategories.length)){
+                System.out.println("You did not choose an option that is specified");
+                continue;
+            }
+
+            isValid = true;
+        }while(!isValid);
+
+        int index = productCategoryChoice - 1;
+        //Getting the user's choice
+
+        ProductCategory productCategory = ProductCategory.values()[index];
+        List<Product> productList = productService.listByCategory(productCategory);
+
+        if(productList.isEmpty()){
+            System.out.println("No product is available for this category");
+            return;
+        }
+
+        for(Product product: productList){
+            System.out.println(product);
+        }
+    }
+
+    private void sortProductByPrice(){
+        Map<String, Product> maps = productService.getAllProducts();
+
+        if(maps.isEmpty()){
+            System.out.println("There is no product recorded in the inventory");
+            return;
+        }
+
+        List<Product> products = new ArrayList<>(maps.values());
+
+        Collections.sort(products);
+        System.out.println(products);
+    }
+
+    private void removeProduct(){
         String productId = "";
         boolean isValid = false;
         do {
@@ -319,6 +383,19 @@ public class InventoryManagementSystem {
 
         System.out.println("Product removed successfully: ");
         System.out.println(product);
+    }
+
+    private void calculateTotalInventoryValue(){
+        Map<String, Product> maps = productService.getAllProducts();
+
+        if(maps.isEmpty()){
+            System.out.println("There is no product recorded in the inventory");
+            return;
+        }
+
+        double totalInventoryValue = productService.totalInventoryValue();
+
+        System.out.println("TOTAL INVENTORY VALUE: "+totalInventoryValue+" NAIRA");
     }
 
     private void exitApplication(){

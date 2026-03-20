@@ -1,5 +1,6 @@
 package com.olujobii.service.impl;
 
+import com.olujobii.enums.ProductCategory;
 import com.olujobii.model.Product;
 import com.olujobii.repository.InventoryRepository;
 import com.olujobii.service.ProductService;
@@ -21,18 +22,26 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public boolean searchByName(Product product) {
-        return false;
-    }
+    public List<Product> listByCategory(ProductCategory category) {
+        Map<String,Product> maps = inventoryRepository.getProducts();
 
-    @Override
-    public List<Product> listByCategory(String category) {
-        return List.of();
+        List<Product> lists = new ArrayList<>();
+        for(Product product : maps.values()){
+            if(product.category() == category)
+                lists.add(product);
+        }
+
+        return lists;
     }
 
     @Override
     public List<Product> sortByPrice() {
         return List.of();
+    }
+
+    @Override
+    public Map<String, Product> getAllProducts(){
+        return inventoryRepository.getProducts();
     }
 
     @Override
@@ -42,7 +51,14 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public double totalInventoryValue() {
-        return 0;
+        double total = 0 ;
+        Map<String, Product> products = inventoryRepository.getProducts();
+
+        for(Product product : products.values()){
+            total += product.getTotalValue();
+        }
+
+        return total;
     }
 
     @Override
@@ -50,6 +66,11 @@ public class ProductServiceImpl implements ProductService {
         Map<String,Product> products = inventoryRepository.getProducts();
 
         return products.containsKey(userInputId);
+    }
+
+    @Override
+    public Product createNewProduct(String id, String productName, double price, int quantity, ProductCategory productCategory){
+        return new Product(id,productName,price,quantity,productCategory);
     }
 
     @Override
