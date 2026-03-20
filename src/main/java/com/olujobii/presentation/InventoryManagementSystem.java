@@ -78,15 +78,135 @@ public class InventoryManagementSystem {
     }
 
     private void addProduct(){
+        //VALIDATE EACH FIELD
+        String id = createProductId();
+        String productName = validateProductName();
+        double price = validateProductPrice();
+        int quantity = validateProductQuantity();
+        ProductCategory productCategory = validateProductCategory();
+
+        //CREATE PRODUCT
+        Product product = productService.createNewProduct(id,productName,price,quantity,productCategory);
+        System.out.println("Product created: "+product);
+
+        //ADD TO MAP
+        productService.addProduct(product);
+        System.out.println("Product added successfully");
+    }
+
+    private void updateProductQuantity(){
+        String productId = validateProductId();
+
+        Product product = productService.getProduct(productId);
+
+        if(product == null){
+            System.out.println("No record of product in inventory");
+            return;
+        }
+
+        System.out.println("Fetching Product for you.....");
+        System.out.println(product);
+
+        //VALIDATING NEW QUANTITY
+        int quantity = validateProductQuantity();
+
+        //Updating product
+        Product updatedProduct = productService.updateProductQuantity(product,quantity);
+
+        //Adding product to Map
+        productService.addProduct(updatedProduct);
+        System.out.println("Product updated successfully.");
+        System.out.println(updatedProduct);
+    }
+
+    private void searchForProductByName(){
+        String productName = validateProductName();
+
+        List<Product> products = productService.searchProductName(productName);
+        listProductByCriteria(products);
+    }
+
+    private void listByProductCategory(){
+        //Getting the user's choice
+        ProductCategory choice = validateProductCategory();
+
+        List<Product> productList = productService.listByCategory(choice);
+
+        listProductByCriteria(productList);
+    }
+
+    private void sortProductByPrice(){
+        Map<String, Product> maps = productService.getAllProducts();
+
+        if(maps.isEmpty()){
+            System.out.println("There is no product recorded in the inventory");
+            return;
+        }
+
+        List<Product> products = new ArrayList<>(maps.values());
+
+        Collections.sort(products);
+        System.out.println(products);
+    }
+
+    private void removeProduct(){
+        String productId = validateProductId();
+
+        Product product = productService.removeProduct(productId);
+
+        if(product == null){
+            System.out.println("No record of product in inventory");
+            return;
+        }
+
+        System.out.println("Product removed successfully: ");
+        System.out.println(product);
+    }
+
+    private void calculateTotalInventoryValue(){
+        Map<String, Product> maps = productService.getAllProducts();
+
+        if(maps.isEmpty()){
+            System.out.println("No record of product in the inventory");
+            return;
+        }
+
+        double totalInventoryValue = productService.totalInventoryValue();
+
+        System.out.println("TOTAL INVENTORY VALUE: "+totalInventoryValue+" NAIRA");
+    }
+
+    private void exitApplication(){
+        System.out.println("Exiting...");
+        scanner.close();
+    }
+
+    //This ID operation is to validate the ID user passed
+    private String validateProductId(){
+        String productId;
+        boolean isValid = false;
+
+        do {
+            System.out.print("Enter product ID: ");
+            productId = scanner.nextLine();
+
+            if(productId.isBlank()){
+                System.out.println("You did not input any ID, please input an ID to confirm if the product exists");
+                continue;
+            }
+
+            isValid = true;
+        }while(!isValid);
+
+        return productId;
+    }
+
+    //This ID operation is for creating ID for users when they are adding product
+    private String createProductId(){
         String userInput;
         String id = "";
-        String productName = "";
-        double price = 0;
-        int quantity = 0;
-        ProductCategory productCategory = null;
         boolean isValidationValid = false;
 
-        //VALIDATING PRODUCT ID - FIRST WHILE LOOP
         do {
             System.out.print("Enter a product ID (only numbers and input should not be more then 3 digits): ");
             userInput = scanner.nextLine().trim();
@@ -115,24 +235,31 @@ public class InventoryManagementSystem {
             isValidationValid = true;
         }while(!isValidationValid);
 
-        isValidationValid = false;
-        //VALIDATING PRODUCT NAME - SECOND WHILE LOOP
+        return id;
+    }
+
+    private String validateProductName(){
+        String productName;
+        boolean isValidationValid = false;
         do {
             System.out.print("Enter product name: ");
-            userInput = scanner.nextLine().trim();
+            productName = scanner.nextLine().trim();
 
-            if (userInput.isBlank()) {
+            if (productName.isBlank()) {
                 System.out.println("Not a valid product name");
                 continue;
             }
 
-            productName = userInput;//product name variable
             isValidationValid = true;
         }while(!isValidationValid);
 
+        return productName;
+    }
 
-        //VALIDATING PRICE - THIRD WHILE LOOP
-        isValidationValid = false;
+    private double validateProductPrice(){
+        String userInput;
+        double price = 0;
+        boolean isValidationValid = false;
         do {
             System.out.print("Enter a price (not less than 500): ");
             userInput = scanner.nextLine().trim();
@@ -151,9 +278,14 @@ public class InventoryManagementSystem {
             isValidationValid = true;
         }while(!isValidationValid);
 
+        return price;
+    }
 
-        //VALIDATING QUANTITY - FOURTH WHILE LOOP
-        isValidationValid = false;
+    private int validateProductQuantity(){
+        String userInput;
+        int quantity = 0;
+        boolean isValidationValid = false;
+
         do {
             System.out.print("Enter a quantity (Not less than 1): ");
             userInput = scanner.nextLine().trim();
@@ -171,9 +303,14 @@ public class InventoryManagementSystem {
             isValidationValid = true;
         }while(!isValidationValid);
 
+        return quantity;
+    }
 
-        //VALIDATING PRODUCT CATEGORY - FINAL WHILE LOOP
-        isValidationValid = false;
+    private ProductCategory validateProductCategory(){
+        String userInput;
+        ProductCategory productCategory = null;
+        boolean isValidationValid = false;
+
         do {
             System.out.println("Choose a product category: ");
             ProductCategory[] productCategories = ProductCategory.values();
@@ -204,202 +341,17 @@ public class InventoryManagementSystem {
             isValidationValid = true;
         }while(!isValidationValid);
 
-
-        Product product = productService.createNewProduct(id,productName,price,quantity,productCategory);
-        System.out.println("Product created: "+product);
-
-        productService.addProduct(product);
-        System.out.println("Product added successfully");
+        return productCategory;
     }
 
-    private void updateProductQuantity(){
-        String userInput = "";
-        String productId = "";
-        boolean isValid = false;
-        int quantity = 0;
-        //CHECKING IF ID EXISTS
-        do {
-            System.out.print("Enter product ID: ");
-            productId = scanner.nextLine();
-
-            if(productId.isBlank()){
-                System.out.println("You did not input any ID, please input an ID to confirm if the product exists");
-                continue;
-            }
-
-            isValid = true;
-        }while(!isValid);
-
-        Product product = productService.getProduct(productId);
-
-        if(product == null){
-            System.out.println("Product does not exist in our system");
-            return;
-        }
-
-        System.out.println("Fetching Product for you.....");
-        System.out.println(product);
-
-        //VALIDATING NEW QUANTITY
-        isValid = false;
-        do {
-            System.out.print("Enter a quantity (Not less than 1): ");
-            userInput = scanner.nextLine().trim();
-
-            if (!InputValidatorUtil.isAValidInteger(userInput)) {
-                System.out.println("Not a valid number");
-                continue;
-            }
-
-            quantity = Integer.parseInt(userInput); //quantity variable
-            if (quantity < 1) {
-                System.out.println("We only sell 1 or more quantity of a product");
-                continue;
-            }
-            isValid = true;
-        }while(!isValid);
-
-        //Updating product
-        Product updatedProduct = productService.updateProductQuantity(product,quantity);
-
-        //Adding product to Map
-        productService.addProduct(updatedProduct);
-        System.out.println("Product updated successfully.");
-        System.out.println(updatedProduct);
-    }
-
-    private void searchForProductByName(){
-        String productName = "";
-        boolean isValid = false;
-        do {
-            System.out.print("Enter product name: ");
-            productName = scanner.nextLine().trim();
-
-            if (productName.isBlank()) {
-                System.out.println("Not a valid product name");
-                continue;
-            }
-
-            isValid = true;
-        }while(!isValid);
-
-        List<Product> products = productService.searchProductName(productName);
+    private void listProductByCriteria(List<Product> products){
         if(products.isEmpty()){
-            System.out.println("Product does not exist in our system");
+            System.out.println("No record of product in inventory");
             return;
         }
 
         System.out.println("Product found, loading product details...");
         for(Product product : products)
             System.out.println(product);
-    }
-
-    private void listByProductCategory(){
-        String userInput = "";
-        int productCategoryChoice = 0;
-        boolean isValid = false;
-        ProductCategory[] productCategories = ProductCategory.values();
-
-        do {
-            for (int i = 0; i < productCategories.length; i++) {
-                int order = i + 1;
-                System.out.println(order + ". " + productCategories[i]);
-            }
-
-            System.out.print("Choose an option: ");
-            userInput = scanner.nextLine().trim();
-
-            if(userInput.isBlank()){
-                System.out.println("You did not choose any option, try again");
-                continue;
-            }
-
-            if(!InputValidatorUtil.isAValidInteger(userInput)){
-                System.out.println("Not a valis option");
-                continue;
-            }
-
-            productCategoryChoice = Integer.parseInt(userInput);
-
-            if(InputValidatorUtil.isUserOptionNotValid(productCategoryChoice,productCategories.length)){
-                System.out.println("You did not choose an option that is specified");
-                continue;
-            }
-
-            isValid = true;
-        }while(!isValid);
-
-        int index = productCategoryChoice - 1;
-        //Getting the user's choice
-
-        ProductCategory productCategory = ProductCategory.values()[index];
-        List<Product> productList = productService.listByCategory(productCategory);
-
-        if(productList.isEmpty()){
-            System.out.println("No product is available for this category");
-            return;
-        }
-
-        for(Product product: productList){
-            System.out.println(product);
-        }
-    }
-
-    private void sortProductByPrice(){
-        Map<String, Product> maps = productService.getAllProducts();
-
-        if(maps.isEmpty()){
-            System.out.println("There is no product recorded in the inventory");
-            return;
-        }
-
-        List<Product> products = new ArrayList<>(maps.values());
-
-        Collections.sort(products);
-        System.out.println(products);
-    }
-
-    private void removeProduct(){
-        String productId = "";
-        boolean isValid = false;
-        do {
-            System.out.print("Enter product ID: ");
-            productId = scanner.nextLine();
-
-            if(productId.isBlank()){
-                System.out.println("You did not input any ID, please input an ID to confirm if the product exists");
-                continue;
-            }
-
-            isValid = true;
-        }while(!isValid);
-
-        Product product = productService.removeProduct(productId);
-
-        if(product == null){
-            System.out.println("Product does not exist in our system.");
-            return;
-        }
-
-        System.out.println("Product removed successfully: ");
-        System.out.println(product);
-    }
-
-    private void calculateTotalInventoryValue(){
-        Map<String, Product> maps = productService.getAllProducts();
-
-        if(maps.isEmpty()){
-            System.out.println("There is no product recorded in the inventory");
-            return;
-        }
-
-        double totalInventoryValue = productService.totalInventoryValue();
-
-        System.out.println("TOTAL INVENTORY VALUE: "+totalInventoryValue+" NAIRA");
-    }
-
-    private void exitApplication(){
-        System.out.println("Exiting...");
-        scanner.close();
     }
 }
