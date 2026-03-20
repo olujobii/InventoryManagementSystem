@@ -6,6 +6,7 @@ import com.olujobii.repository.InventoryRepository;
 import com.olujobii.service.ProductService;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -17,31 +18,34 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public List<Product> listAll(){
+        return inventoryRepository.getProducts();
+    }
+
+    @Override
     public void addProduct(Product product) {
         inventoryRepository.add(product);
     }
 
     @Override
     public List<Product> listByCategory(ProductCategory category) {
-        Map<String,Product> maps = inventoryRepository.getProducts();
+        List<Product> products = inventoryRepository.getProducts();
+        List<Product> searchedProducts = new ArrayList<>();
 
-        List<Product> lists = new ArrayList<>();
-        for(Product product : maps.values()){
+        for(Product product : products){
             if(product.category() == category)
-                lists.add(product);
+                searchedProducts.add(product);
         }
 
-        return lists;
+        return searchedProducts;
     }
 
     @Override
     public List<Product> sortByPrice() {
-        return List.of();
-    }
+        List<Product> products = inventoryRepository.getProducts();
 
-    @Override
-    public Map<String, Product> getAllProducts(){
-        return inventoryRepository.getProducts();
+        Collections.sort(products);
+        return products;
     }
 
     @Override
@@ -52,9 +56,9 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public double totalInventoryValue() {
         double total = 0 ;
-        Map<String, Product> products = inventoryRepository.getProducts();
+        List<Product> products = inventoryRepository.getProducts();
 
-        for(Product product : products.values()){
+        for(Product product : products){
             total += product.getTotalValue();
         }
 
@@ -62,37 +66,25 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public boolean isKeyAvailable(String userInputId){
-        Map<String,Product> products = inventoryRepository.getProducts();
-
-        return products.containsKey(userInputId);
-    }
-
-    @Override
-    public Product createNewProduct(String id, String productName, double price, int quantity, ProductCategory productCategory){
-        return new Product(id,productName,price,quantity,productCategory);
-    }
-
-    @Override
-    public Product getProduct(String id){
-        return inventoryRepository.getProductFromInventory(id);
-    }
-
-    @Override
-    public Product updateProductQuantity(Product product, int quantity){
-        return new Product(product.id(), product.name(), product.price(), quantity,product.category());
+    public Product getProductById(String id){
+        return inventoryRepository.findProductById(id);
     }
 
     @Override
     public List<Product> searchProductName(String productName){
-        Map<String, Product> products = inventoryRepository.getProducts();
-        List<Product> productList = new ArrayList<>();
+        List<Product> products = inventoryRepository.getProducts();
+        List<Product> searchedProducts = new ArrayList<>();
 
-        for(Product product : products.values()){
+        for(Product product : products){
             if(product.name().equalsIgnoreCase(productName))
-                productList.add(product);
+                searchedProducts.add(product);
         }
 
-        return productList;
+        return searchedProducts;
+    }
+
+    @Override
+    public boolean isProductAvailable(){
+        return inventoryRepository.getProducts().isEmpty();
     }
 }

@@ -4,9 +4,10 @@ import com.olujobii.enums.ProductCategory;
 import com.olujobii.model.Product;
 
 import java.util.List;
-import java.util.Map;
 
 public interface ProductService {
+
+    List<Product> listAll();
 
     void addProduct(Product product);
 
@@ -16,17 +17,11 @@ public interface ProductService {
 
     Product removeProduct(String productId);
 
-    Map<String, Product> getAllProducts();
-
     double totalInventoryValue();
 
-    boolean isKeyAvailable(String userInputId);
+    boolean isProductAvailable();
 
-    Product createNewProduct(String id, String productName, double price, int quantity, ProductCategory productCategory);
-
-    Product getProduct(String id);
-
-    Product updateProductQuantity(Product product, int quantity);
+    Product getProductById(String id);
 
     List<Product> searchProductName(String productName);
 }
