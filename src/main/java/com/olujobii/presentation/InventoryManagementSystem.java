@@ -74,7 +74,7 @@ public class InventoryManagementSystem {
         System.out.println("2. Update Product Quantity");
         System.out.println("3. Search for Product by Name");
         System.out.println("4. List by Product Category");
-        System.out.println("5. Sort by Product Price");
+        System.out.println("5. Sort by Product Price (Ascending)");
         System.out.println("6. Remove a Product");
         System.out.println("7. Calculate Total Inventory Value");
         System.out.println("8. List All Products");
@@ -147,7 +147,8 @@ public class InventoryManagementSystem {
         }
 
         List<Product> products = productService.sortByPrice();
-        System.out.println(products);
+        for(Product product : products)
+            System.out.println(product);
     }
 
     private void removeProduct(){
