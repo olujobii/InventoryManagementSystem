@@ -27,7 +27,7 @@ public class InventoryRepositoryImpl implements InventoryRepository {
 
     @Override
     public List<Product> getProducts(){
-        return new ArrayList<>(products.values());
+        return products.values().stream().toList();
     }
 
     @Override
@@ -37,24 +37,11 @@ public class InventoryRepositoryImpl implements InventoryRepository {
 
     @Override
     public List<Product> findProductByName(String productName){
-        List<Product> searchedProducts = new ArrayList<>();
-
-        for(Product product : getProducts()){
-            if(product.name().toLowerCase().contains(productName.toLowerCase()))
-                searchedProducts.add(product);
-        }
-
-        return searchedProducts;
+        return getProducts().stream().filter(product -> product.name().toLowerCase().contains(productName)).toList();
     }
 
     @Override
     public List<Product> findProductByCategory(ProductCategory productCategory){
-        List<Product> searchedProduct = new ArrayList<>();
-
-        for(Product product : getProducts()){
-            if(product.category() == productCategory)
-                searchedProduct.add(product);
-        }
-        return searchedProduct;
+        return getProducts().stream().filter(product -> product.category() == productCategory).toList();
     }
 }

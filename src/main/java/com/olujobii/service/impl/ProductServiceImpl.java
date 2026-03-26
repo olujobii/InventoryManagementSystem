@@ -32,10 +32,8 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public List<Product> sortByPrice() {
-        List<Product> products = inventoryRepository.getProducts();
 
-        Collections.sort(products);
-        return products;
+        return inventoryRepository.getProducts().stream().sorted().toList();
     }
 
     @Override
@@ -45,14 +43,8 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public double totalInventoryValue() {
-        double total = 0 ;
-        List<Product> products = inventoryRepository.getProducts();
 
-        for(Product product : products){
-            total += product.getTotalValue();
-        }
-
-        return total;
+        return inventoryRepository.getProducts().stream().mapToDouble(Product::getTotalValue).sum();
     }
 
     @Override
