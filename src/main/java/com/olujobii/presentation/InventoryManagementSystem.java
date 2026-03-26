@@ -141,14 +141,10 @@ public class InventoryManagementSystem {
     }
 
     private void sortProductByPrice(){
-        if(productService.isProductAvailable()){
-            System.out.println("There is no product recorded in the inventory");
-            return;
-        }
 
         List<Product> products = productService.sortByPrice();
-        for(Product product : products)
-            System.out.println(product);
+
+        listProductByCriteria(products);
     }
 
     private void removeProduct(){
@@ -357,7 +353,6 @@ public class InventoryManagementSystem {
         }
 
         System.out.println("Product found, loading product details...");
-        for(Product product : products)
-            System.out.println(product);
+        products.forEach(product -> System.out.println(product));
     }
 }
