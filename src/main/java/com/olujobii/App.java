@@ -18,7 +18,7 @@ public class App
     {
         Product product = new Product("PR-1","Phone",500.0,5, ProductCategory.ELECTRONICS);
         Product product2 = new Product("PR-2","Phone",800.0,5, ProductCategory.ELECTRONICS);
-        Product product3 = new Product("PR-3","Phone",600.0,5, ProductCategory.ELECTRONICS);
+        Product product3 = new Product("PR-3","Electric Fan",600.0,5, ProductCategory.ELECTRONICS);
         Map<String,Product> map = new HashMap<>();
         map.put(product.id(), product);
         map.put(product2.id(), product2);
